@@ -26,6 +26,40 @@ Built on **Gnani AI Prisma** (speech-to-text) and **Gnani AI Timbre** (text-to-s
 
 ---
 
+## 📋 Project status
+
+### ✅ What's built
+| Area | Status |
+|---|---|
+| **Live voice calls** | Gnani **Prisma** streaming STT → streaming Gemini agent → Gnani **Timbre** streaming TTS. ~70–145 ms transcription, ~2 s voice-to-voice. |
+| **Languages** | 10 Indian languages + Hinglish, with auto-detection. Tested end to end in Hindi, Kannada, Telugu and Hinglish. |
+| **Answers** | Live GPS weather, government-scheme facts, live-search tool for current dates and amounts, crop photo diagnosis. |
+| **Call features** | Phone-quality 8 kHz mode, barge-in (interrupt the assistant), fragments of a question split by a pause are joined. |
+| **Farmer-first UI** | Choose your language by its script with spoken confirmation, one big talk button, every label in the farmer's language. |
+| **Android app** | `KisanMitra.apk` (56 KB): native shell with mic, GPS and camera permissions; API keys stay on the server. |
+| **Reliability** | Gemini requests raced across a model fallback chain, quota-exhausted models skipped, tool timeouts with spoken fillers. |
+| **Self-test** | In-app ⚙️ **System check** tests every service live. |
+| **Easy setup** | `run.bat` / `run.sh` one-command start (tested from a clean copy: running in under 2 minutes), `render.yaml` + `Dockerfile` for cloud deploy. |
+
+### 🔧 What's needed
+| To run it | |
+|---|---|
+| Python 3.10+ | `run.bat` / `run.sh` installs everything else |
+| **Gnani API key** | [app.gnani.ai](https://app.gnani.ai/voice); the first run asks for it |
+| **Gemini API key** | [aistudio.google.com/apikey](https://aistudio.google.com/apikey); free tier works, paid tier recommended (higher limits + Google Search grounding for the latest scheme dates) |
+| HTTPS link (only for the Android app / phones) | Deploy to Render, or a Cloudflare quick tunnel |
+
+| Still to do | Why |
+|---|---|
+| **Live mandi prices** | Code is ready, but the government data.gov.in Agmarknet API was down during the build. The bot says so instead of guessing. |
+| **Gnani Evon v3.3 for reasoning** | Evon isn't on the Gnani API yet. The LLM layer is pluggable, so self-hosting Evon gives a fully sovereign stack. |
+| **Toll-free phone number** | Telephony media streams → the same pipeline (Prisma and Timbre support 8 kHz/µ-law), for farmers without smartphones. |
+| **Field testing on real phones** | The APK is built and its permissions verified; it needs testing across Android devices and rural networks. |
+| **Expert grounding** | ICAR / state agricultural university "Package of Practices" guides and IMD agromet advisories for more precise advice. |
+| **Personal records** | The app can't see a farmer's own payment status. That needs official scheme-portal integration. |
+
+---
+
 ## The problem
 India has about **146 million farm holdings**, and agriculture employs about 45% of the workforce. When a crop gets sick, rain is
 forecast before spraying, or a farmer needs to know when a scheme payment arrives, expert help is far away. Most farmers
@@ -156,19 +190,9 @@ Render reads `render.yaml` and asks for the two keys. The `Dockerfile` also work
 
 **API keys stay on the server and are never inside the APK.** To rebuild: `cd android && gradle assembleDebug` (JDK 17, Android SDK 34).
 
-## Honest limitations
-- Reasoning is a hosted LLM (Gemini), not a Gnani model, because Evon v3.3 isn't on the Gnani API yet.
+## Notes
 - This is general advice, not a replacement for a KVK expert; it says so for serious cases.
-- The government Agmarknet mandi-price API was down during the build. The bot then says so instead of guessing.
-- Live search quality depends on the Gemini plan (Google Search grounding needs the paid tier; the free fallback is best-effort).
-- The app can't see a farmer's personal payment record. It explains likely reasons and fix steps instead.
 - Barge-in works best with headphones, because browser echo cancellation is imperfect.
-
-## Roadmap
-- **Toll-free phone number** (telephony media streams → the same pipeline; Prisma and Timbre support 8 kHz/µ-law natively) for farmers without smartphones
-- **Self-hosted Gnani Evon v3.3** for a fully sovereign Indian AI stack
-- Grounding in ICAR / state agricultural university "Package of Practices" crop guides and IMD agromet advisories
-- Proactive alerts: rain-before-spraying, pest outbreaks, scheme instalment releases
 
 ---
 **Author:** Challa Shiva Kethak · Amrita Vishwa Vidyapeetham, Bengaluru
